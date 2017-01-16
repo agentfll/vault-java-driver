@@ -8,6 +8,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * <p>A container for the configuration settings needed to initialize a <code>Vault</code> driver instance.</p>
@@ -75,7 +78,7 @@ public class VaultConfig {
     private EnvironmentLoader environmentLoader;
     private String address;
     private String token;
-    private String sslPemUTF8;
+    private Set<String> sslPemUTF8;
     private Boolean sslVerify;
     private Integer openTimeout;
     private Integer readTimeout;
@@ -244,7 +247,20 @@ public class VaultConfig {
      * @return This object, with sslPemUTF8 populated, ready for additional builder-pattern method calls or else finalization with the build() method
      */
     public VaultConfig sslPemUTF8(final String sslPemUTF8) {
-        this.sslPemUTF8 = sslPemUTF8;
+        this.sslPemUTF8 = new HashSet<>();
+        this.sslPemUTF8.add(sslPemUTF8);
+        return this;
+    }
+    
+    /**
+     * Add an X.509 certificate to the set of accepted root certificates for this configuration.
+     * @see sslPemUTF8
+     * @param sslPemUTF8 An X.509 certificate, in unencrypted PEM format with UTF-8 encoding.
+     * @return This object, with the provided certificate added to the set of acceptable certificates.
+     */
+    public VaultConfig addSslPemUTF8(final String sslPemUTF8) {
+        if (this.sslPemUTF8 == null) this.sslPemUTF8 = new HashSet<>();
+        this.sslPemUTF8.add(sslPemUTF8);
         return this;
     }
 
@@ -275,7 +291,8 @@ public class VaultConfig {
      */
     public VaultConfig sslPemFile(final File sslPemFile) throws VaultException {
         try (final InputStream input = new FileInputStream(sslPemFile)){
-            this.sslPemUTF8 = inputStreamToUTF8(input);
+            this.sslPemUTF8 = new HashSet<>();
+            this.sslPemUTF8.add(inputStreamToUTF8(input));
         } catch (IOException e) {
             throw new VaultException(e);
         }
@@ -310,7 +327,8 @@ public class VaultConfig {
      */
     public VaultConfig sslPemResource(final String classpathResource) throws VaultException {
         try (final InputStream input = this.getClass().getResourceAsStream(classpathResource)){
-            this.sslPemUTF8 = inputStreamToUTF8(input);
+            this.sslPemUTF8 = new HashSet<>();
+            this.sslPemUTF8.add(inputStreamToUTF8(input));
         } catch (IOException e) {
             throw new VaultException(e);
         }
@@ -424,7 +442,8 @@ public class VaultConfig {
         if (this.sslPemUTF8 == null && environmentLoader.loadVariable("VAULT_SSL_CERT") != null) {
             final File pemFile = new File(environmentLoader.loadVariable("VAULT_SSL_CERT"));
             try (final InputStream input = new FileInputStream(pemFile)) {
-                this.sslPemUTF8 = inputStreamToUTF8(input);
+                this.sslPemUTF8 = new HashSet<>();
+                this.sslPemUTF8.add(inputStreamToUTF8(input));
             } catch (IOException e) {
                 throw new VaultException(e);
             }
@@ -460,7 +479,13 @@ public class VaultConfig {
     }
 
     public String getSslPemUTF8() {
-        return sslPemUTF8;
+        if (sslPemUTF8 == null || sslPemUTF8.isEmpty()) return null;
+        if (sslPemUTF8.size() > 1) throw new IllegalStateException("More than one SSL PEM UTF-8 string is registered with this instance of VaultConfig.");
+        return sslPemUTF8.iterator().next(); // Return the first (and necessarily only) element of the set.
+    }
+    
+    public Set<String> getSslPemUTF8Set() {
+        return Collections.unmodifiableSet(sslPemUTF8);
     }
 
     public Boolean isSslVerify() {

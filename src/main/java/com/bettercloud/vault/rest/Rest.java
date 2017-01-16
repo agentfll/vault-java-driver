@@ -18,13 +18,16 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.security.KeyStore;
+import java.security.MessageDigest;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 /**
@@ -72,7 +75,7 @@ public class Rest {
     private Integer connectTimeoutSeconds;
     private Integer readTimeoutSeconds;
     private Boolean sslVerification;
-    private String sslPemUTF8;
+    private Set<String> sslPemUTF8;
 
     /**
      * <p>Sets the base URL to which the HTTP request will be sent.  The URL may or may not include query parameters
@@ -214,7 +217,13 @@ public class Rest {
      * @return This object, with sslPemUTF8 populated, ready for other builder-pattern config methods or an HTTP verb method
      */
     public Rest sslPemUTF8(final String pemFileContents) {
-        this.sslPemUTF8 = pemFileContents;
+        this.sslPemUTF8 = new HashSet<>();
+        this.sslPemUTF8.add(pemFileContents);
+        return this;
+    }
+    
+    public Rest sslPemUTF8Set(final Set<String> sslPemUTF8Set) {
+        this.sslPemUTF8 = sslPemUTF8Set;
         return this;
     }
 
@@ -414,7 +423,7 @@ public class Rest {
             if (connection instanceof HttpsURLConnection) {
                 final HttpsURLConnection httpsURLConnection = (HttpsURLConnection) connection;
                 // Cert file supplied
-                if (sslPemUTF8 != null) {
+                if (sslPemUTF8 != null && sslPemUTF8.size() > 0) {
                     final SSLContext sslContext = initSSLContext();
                     httpsURLConnection.setSSLSocketFactory(sslContext.getSocketFactory());
                 }
@@ -468,14 +477,23 @@ public class Rest {
         try {
             final CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
 
-            final ByteArrayInputStream pem = new ByteArrayInputStream(sslPemUTF8.getBytes("UTF-8"));
-            final X509Certificate certificate = (X509Certificate) certificateFactory.generateCertificate(pem);
-            pem.close();
-
             final TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+            
             final KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
             keyStore.load(null);
-            keyStore.setCertificateEntry("caCert", certificate);
+            
+            MessageDigest sha1 = MessageDigest.getInstance("SHA-1");
+            
+            if (sslPemUTF8 != null) {
+                for (String certificateString : sslPemUTF8) {
+                    if (certificateString == null) continue;
+                    final ByteArrayInputStream pem = new ByteArrayInputStream(certificateString.getBytes("UTF-8"));
+                    final X509Certificate certificate = (X509Certificate) certificateFactory.generateCertificate(pem);
+                    pem.close();
+                    
+                    keyStore.setCertificateEntry(new String(sha1.digest(certificateString.getBytes())), certificate);
+                }
+            }
 
             trustManagerFactory.init(keyStore);
 
