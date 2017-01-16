@@ -485,6 +485,7 @@ public class VaultConfig {
     }
     
     public Set<String> getSslPemUTF8Set() {
+        if (sslPemUTF8 == null) return null;
         return Collections.unmodifiableSet(sslPemUTF8);
     }
 

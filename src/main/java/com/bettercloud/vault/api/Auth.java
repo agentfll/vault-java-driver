@@ -104,7 +104,7 @@ public class Auth {
                         .body(requestJson.getBytes("UTF-8"))
                         .connectTimeoutSeconds(config.getOpenTimeout())
                         .readTimeoutSeconds(config.getReadTimeout())
-                        .sslPemUTF8(config.getSslPemUTF8())
+                        .sslPemUTF8Set(config.getSslPemUTF8Set())
                         .sslVerification(config.isSslVerify() != null ? config.isSslVerify() : null)
                         .post();
 
@@ -169,7 +169,7 @@ public class Auth {
                         .body(requestJson.getBytes("UTF-8"))
                         .connectTimeoutSeconds(config.getOpenTimeout())
                         .readTimeoutSeconds(config.getReadTimeout())
-                        .sslPemUTF8(config.getSslPemUTF8())
+                        .sslPemUTF8Set(config.getSslPemUTF8Set())
                         .sslVerification(config.isSslVerify() != null ? config.isSslVerify() : null)
                         .post();
 
@@ -241,7 +241,7 @@ public class Auth {
                         .body(requestJson.getBytes("UTF-8"))
                         .connectTimeoutSeconds(config.getOpenTimeout())
                         .readTimeoutSeconds(config.getReadTimeout())
-                        .sslPemUTF8(config.getSslPemUTF8())
+                        .sslPemUTF8Set(config.getSslPemUTF8Set())
                         .sslVerification(config.isSslVerify() != null ? config.isSslVerify() : null)
                         .post();
 
@@ -327,7 +327,7 @@ public class Auth {
                         .body(requestJson.getBytes("UTF-8"))
                         .connectTimeoutSeconds(config.getOpenTimeout())
                         .readTimeoutSeconds(config.getReadTimeout())
-                        .sslPemUTF8(config.getSslPemUTF8())
+                        .sslPemUTF8Set(config.getSslPemUTF8Set())
                         .sslVerification(config.isSslVerify() != null ? config.isSslVerify() : null)
                         .post();
 
@@ -389,7 +389,7 @@ public class Auth {
                         .body(requestJson.getBytes("UTF-8"))
                         .connectTimeoutSeconds(config.getOpenTimeout())
                         .readTimeoutSeconds(config.getReadTimeout())
-                        .sslPemUTF8(config.getSslPemUTF8())
+                        .sslPemUTF8Set(config.getSslPemUTF8Set())
                         .sslVerification(config.isSslVerify() != null ? config.isSslVerify() : null)
                         .post();
 
@@ -454,7 +454,7 @@ public class Auth {
                         .body(increment < 0 ? null : requestJson.getBytes("UTF-8"))
                         .connectTimeoutSeconds(config.getOpenTimeout())
                         .readTimeoutSeconds(config.getReadTimeout())
-                        .sslPemUTF8(config.getSslPemUTF8())
+                        .sslPemUTF8Set(config.getSslPemUTF8Set())
                         .sslVerification(config.isSslVerify() != null ? config.isSslVerify() : null)
                         .post();
                 // Validate restResponse

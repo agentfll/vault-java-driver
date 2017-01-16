@@ -82,7 +82,7 @@ public class Debug {
                         .url(config.getAddress() + "/v1/" + path)
                         .connectTimeoutSeconds(config.getOpenTimeout())
                         .readTimeoutSeconds(config.getReadTimeout())
-                        .sslPemUTF8(config.getSslPemUTF8())
+                        .sslPemUTF8Set(config.getSslPemUTF8Set())
                         .sslVerification(config.isSslVerify() != null ? config.isSslVerify() : null);
                 // Add token if present
                 if (config.getToken() != null) {

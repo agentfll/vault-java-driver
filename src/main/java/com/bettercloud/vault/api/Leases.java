@@ -45,7 +45,7 @@ public class Leases {
                         .header("X-Vault-Token", config.getToken())
                         .connectTimeoutSeconds(config.getOpenTimeout())
                         .readTimeoutSeconds(config.getReadTimeout())
-                        .sslPemUTF8(config.getSslPemUTF8())
+                        .sslPemUTF8Set(config.getSslPemUTF8Set())
                         .sslVerification(config.isSslVerify() != null ? config.isSslVerify() : null)
                         .put();
 
@@ -99,7 +99,7 @@ public class Leases {
                         .header("X-Vault-Token", config.getToken())
                         .connectTimeoutSeconds(config.getOpenTimeout())
                         .readTimeoutSeconds(config.getReadTimeout())
-                        .sslPemUTF8(config.getSslPemUTF8())
+                        .sslPemUTF8Set(config.getSslPemUTF8Set())
                         .sslVerification(config.isSslVerify() != null ? config.isSslVerify() : null)
                         .put();
 
@@ -156,7 +156,7 @@ public class Leases {
                         .header("X-Vault-Token", config.getToken())
                         .connectTimeoutSeconds(config.getOpenTimeout())
                         .readTimeoutSeconds(config.getReadTimeout())
-                        .sslPemUTF8(config.getSslPemUTF8())
+                        .sslPemUTF8Set(config.getSslPemUTF8Set())
                         .sslVerification(config.isSslVerify() != null ? config.isSslVerify() : null)
                         .put();
 
